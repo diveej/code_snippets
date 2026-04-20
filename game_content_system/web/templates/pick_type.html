@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Choose a game type</h1>
+  <p>Each type has its own uploader. Pick the one that fits what you're building.</p>
+
+  <ul class="game-types big">
+    {% for gt in game_types %}
+      <li>
+        <h3>{{ gt.label }}</h3>
+        <p>{{ gt.description }}</p>
+        <a href="{{ url_for('new_draft', game_type=gt.game_type.value) }}" class="btn primary">
+          Start with {{ gt.label }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

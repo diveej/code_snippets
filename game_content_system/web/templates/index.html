@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Content library</h1>
+
+  {% if not contents %}
+    <p class="empty">No content yet. <a href="{{ url_for('new_pick') }}">Create your first draft</a>.</p>
+  {% else %}
+    <table class="content-list">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Game type</th>
+          <th>Status</th>
+          <th>Updated</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in contents %}
+          <tr>
+            <td>{{ c.title or '(untitled)' }}</td>
+            <td>{{ c.game_type.value }}</td>
+            <td><span class="status status-{{ c.status.value }}">{{ c.status.value }}</span></td>
+            <td>{{ c.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+              <a href="{{ url_for('edit', content_id=c.id) }}" class="btn">Edit</a>
+              <form method="post" action="{{ url_for('delete', content_id=c.id) }}" style="display:inline">
+                <button type="submit" class="btn danger" onclick="return confirm('Delete?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <h2>Available game types</h2>
+  <ul class="game-types">
+    {% for gt in game_types %}
+      <li>
+        <a href="{{ url_for('new_draft', game_type=gt.game_type.value) }}">{{ gt.label }}</a>
+        <p>{{ gt.description }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

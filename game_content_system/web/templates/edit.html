@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Edit — {{ draft.title or draft.game_type.value }}{% endblock %}
+{% block content %}
+  <div class="edit-header">
+    <h1>{{ draft.title or "New " + draft.game_type.value }}</h1>
+    <div>
+      <span class="status status-{{ draft.status.value }}">{{ draft.status.value }}</span>
+      <span class="muted">v{{ draft.version }} · id {{ draft.id[:8] }}</span>
+    </div>
+  </div>
+
+  {% if errors %}
+    <div class="panel panel-error">
+      <h3>Validation errors</h3>
+      <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+  {% if warnings %}
+    <div class="panel panel-warning">
+      <h3>Warnings</h3>
+      <ul>{% for w in warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+
+  <form method="post" class="edit-form">
+    <h2>Shared fields</h2>
+    {% for field in spec.simple_fields[:11] %}
+      {% include "_field.html" %}
+    {% endfor %}
+
+    <h2>{{ draft.game_type.value.replace("_", " ").title() }} — details</h2>
+    {% for field in spec.simple_fields[11:] %}
+      {% include "_field.html" %}
+    {% endfor %}
+
+    {% for jf in spec.json_fields %}
+      <div class="field json-field">
+        <label for="{{ jf.name }}">{{ jf.label }}</label>
+        <p class="help">{{ jf.help }}</p>
+        <details>
+          <summary>Example</summary>
+<pre>{{ jf.example | tojson(indent=2) }}</pre>
+        </details>
+        <textarea id="{{ jf.name }}" name="{{ jf.name }}" rows="10">{{ values.get(jf.name, "") }}</textarea>
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" name="action" value="save" class="btn">Save draft</button>
+      <button type="submit" name="action" value="validate" class="btn">Validate</button>
+      <button type="submit" name="action" value="publish" class="btn primary">Publish</button>
+      <a href="{{ url_for('index') }}" class="btn">Back</a>
+    </div>
+  </form>
+{% endblock %}

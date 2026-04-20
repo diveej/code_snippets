@@ -1,0 +1,22 @@
+{# Renders one SimpleField. Expects: `field`, `values`. #}
+<div class="field">
+  <label for="{{ field.name }}">{{ field.label }}</label>
+  {% if field.help %}<p class="help">{{ field.help }}</p>{% endif %}
+  {% if field.kind == "textarea" %}
+    <textarea id="{{ field.name }}" name="{{ field.name }}" rows="4">{{ values.get(field.name, "") }}</textarea>
+  {% elif field.kind == "select" %}
+    <select id="{{ field.name }}" name="{{ field.name }}">
+      {% for opt in field.options %}
+        <option value="{{ opt }}" {% if values.get(field.name) == opt %}selected{% endif %}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+  {% elif field.kind == "checkbox" %}
+    <input id="{{ field.name }}" name="{{ field.name }}" type="checkbox" {% if values.get(field.name) == "on" %}checked{% endif %}>
+  {% elif field.kind == "int" %}
+    <input id="{{ field.name }}" name="{{ field.name }}" type="number" step="1" value="{{ values.get(field.name, '') }}">
+  {% elif field.kind == "float" %}
+    <input id="{{ field.name }}" name="{{ field.name }}" type="number" step="0.01" value="{{ values.get(field.name, '') }}">
+  {% else %}
+    <input id="{{ field.name }}" name="{{ field.name }}" type="text" value="{{ values.get(field.name, '') }}">
+  {% endif %}
+</div>
